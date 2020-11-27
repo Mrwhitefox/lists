@@ -1,0 +1,15 @@
+database_path: /work/db.sqlite
+base_url: localhost
+http_port: 80
+debug: true
+tables:
+  tableA:
+    - colA
+    - colB
+    - colC
+    - colD
+  tableB:
+    - colA
+    - col2
+    - col3
+    - randomName
