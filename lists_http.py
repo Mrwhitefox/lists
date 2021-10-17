@@ -7,7 +7,6 @@ from pony import orm
 db = orm.Database()
 base_url = "" #will be overidden when conf is loaded
 
-columns = {}
 view_columns = {}
 
 class Task(db.Entity):
@@ -42,12 +41,6 @@ def index():
 def send_static(filename):
     return static_file(filename, root='./static')
 
-@route('/<table>/raw')
-def index(table):
-    tasks = []
-    with orm.db_session:
-        tasks = orm.select(t for t in Task if t.table == table).order_by(lambda: orm.desc(t.date))[:]
-    return template('index', tasks=tasks, columns=columns[table], view=None)
 
 @route('/<table>/<view>')
 def viewTable(table, view):
@@ -113,7 +106,6 @@ if __name__ == '__main__':
         base_url = params['base_url']
         http_port = params['http_port']
         debug = params['debug']
-        columns = params['tables']
         view_columns = params['views']
 
     db.bind('sqlite', databasePath, create_db=True)

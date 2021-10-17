@@ -2,14 +2,20 @@ database_path: /work/db.sqlite
 base_url: localhost
 http_port: 80
 debug: true
-tables:
+views:
   tableA:
-    - colA
-    - colB
-    - colC
-    - colD
+    tAv1:
+      - colA
+      - colB
+      - colD
+      - colC
+    tAv2:
+      - colD
+      - colA
   tableB:
-    - colA
-    - col2
-    - col3
-    - randomName
+    tB-view2:
+      - foo
+      - bar
+    tB-view1:
+      - baz
+      - bar
