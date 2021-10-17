@@ -41,7 +41,6 @@ def index():
 def send_static(filename):
     return static_file(filename, root='./static')
 
-
 @route('/<table>/<view>')
 def viewTable(table, view):
     if not view_columns.get(table, {}).get(view):
@@ -65,17 +64,11 @@ def newTask(table, view):
 
 @post('/<table>/<view>/update/<task_id:int>')
 def updateTask(table, view, task_id):
-    #udpate only provided fields, do not modify other fields
-    #data = {}
-
-    table = ""
     with orm.db_session:
         task = Task[task_id]
         for key, value in request.forms.decode('utf-8').items():
             task.data[key] = value
-            print("upd:{}={}".format(key, value))
         task.date = datetime.datetime.now()
-        table = task.table
     redirect("/"+table+"/"+view)
 
 @post('/<table>/<view>/delete/<task_id:int>')
@@ -112,4 +105,3 @@ if __name__ == '__main__':
     db.generate_mapping(create_tables=True)
     
     run(host='0.0.0.0', port=http_port, debug=debug)
-    #run(host='0.0.0.0', port=2000, debug=True)
