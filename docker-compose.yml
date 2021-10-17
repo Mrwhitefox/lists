@@ -1,0 +1,14 @@
+version: '3'
+services:
+  front-nginx:
+    image: nginx:1.20.1-alpine
+    volumes:
+      - ./volumes/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./volumes/nginx/certs:/etc/nginx/certs
+    ports:
+      - 80:80
+      - 443:443
+  webapp-lists:
+    image: lists
+    volumes:
+      - ./volumes/lists/work:/work
