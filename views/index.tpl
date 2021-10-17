@@ -17,17 +17,17 @@
         <span></span>
     </a>
 
-    % include("menu.tpl", columns=columns, table=table)
+    % include("menu.tpl", view_columns=view_columns, table=table, view=view)
 
     <div id="main">
         <div class="content">
             % if table:
             <p>
-            % include("new_form.tpl", columns=columns, table=table)
+            % include("new_form.tpl", view_columns=view_columns, table=table, view=view)
             </p>
 
             <p>
-            % include("table.tpl", columns=columns, table=table, tasks=tasks)
+            % include("table.tpl", view_columns=view_columns, table=table, view=view, tasks=tasks)
             </p>
             %end
         </div>

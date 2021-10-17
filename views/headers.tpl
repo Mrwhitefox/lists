@@ -49,18 +49,15 @@ $( document ).ready(function() {
 
 $( document ).ready(function() {
   $(".delete-button").click(function(){
-      console.log("triggered!");
       if($(this).hasClass("button-red")){
-      console.log("triggered!A");
           idRow = $(this).attr("data-rowid");
           form = document.createElement("form");
           form.method = "post";
-          form.action = "/delete/"+idRow;
+          form.action = "/{{table}}/{{view}}/delete/"+idRow;
           document.body.appendChild(form);
           form.submit();
       }
       else{
-      console.log("triggered!B");
           $(this).addClass("button-red");
       }
   });
@@ -72,17 +69,19 @@ $( document ).ready(function() {
 function submitRowAsForm(idRow) {
   form = document.createElement("form"); // CREATE A NEW FORM TO DUMP ELEMENTS INTO FOR SUBMISSION
   form.method = "post"; // CHOOSE FORM SUBMISSION METHOD, "GET" OR "POST"
-  form.action = "/update/"+idRow; // TELL THE FORM WHAT PAGE TO SUBMIT TO
+  form.action = "/{{table}}/{{view}}/update/"+idRow; // TELL THE FORM WHAT PAGE TO SUBMIT TO
   $("#"+idRow+" td").each(function() { // GRAB ALL <TD> IN THE ROW IDENTIFIED BY idRow, CLONE THEM, AND DUMP THEM IN OUR FORM
 		if(this.getAttribute("data-col")){
-	        input = document.createElement("input"); // CREATE AN ELEMENT TO COPY VALUES TO
-	        input.type = "hidden";
-	        input.name = this.getAttribute("data-col"); // GIVE ELEMENT SAME NAME AS THE <SELECT>
-	        input.value = this.textContent; // ASSIGN THE VALUE FROM THE <SELECT>
-	        form.appendChild(input);
+	        textarea = document.createElement("textarea"); // CREATE AN ELEMENT TO COPY VALUES TO
+	        textarea.style = "visibility:hidden;position:absolute;";
+	        textarea.name = this.getAttribute("data-col"); // GIVE ELEMENT SAME NAME AS THE <SELECT>
+	        textarea.value = this.innerText; // ASSIGN THE VALUE FROM THE <SELECT>
+            console.log(this.textContent);
+	        form.appendChild(textarea);
 		}
 
-    });
+    }
+    );
   document.body.appendChild(form);
   form.submit(); // NOW SUBMIT THE FORM THAT WE'VE JUST CREATED AND POPULATED
 }
