@@ -87,7 +87,7 @@ def deletedItems(table):
     all_columns = {}
     for task in tasks:
         all_columns.update(task.data)
-    
+
     return template('index', tasks=tasks, view_columns={table:{"deleted":list(all_columns.keys())}}, table=table, view="deleted", admin=True)
 
 @route('/<table>/deleted-items/undelete/<task_id:int>')
@@ -112,7 +112,7 @@ def viewTable(table, view):
     with orm.db_session:
         tasks = orm.select(t for t in Task if t.table == table and t.deletion_date is None).order_by(lambda: orm.desc(t.update_date))[:]
     tasks = filter_tasks(tasks, table, view)
-    return template('index', tasks=tasks, view_columns=view_columns, table=table, view=view)
+    return template('index', tasks=tasks, view_columns=allowed_views(), table=table, view=view)
 
 @post('/<table>/<view>/new')
 def newTask(table, view):
