@@ -26,12 +26,13 @@ class Task(db.Entity):
             '_': ['<b>','</b>']
         }
         words = []
-        for word in self.data.get(dataKey, "").split(" "):
-            if word[0] == word[-1] and colors.get(word[0]):
-                words.append(colors[word[0]][0]+html.escape(word)+colors[word[0]][1])
-            else:
-                words.append(html.escape(word))
-        return " ".join(words).replace("\n", "<br/>")
+        for word in self.data.get(dataKey, "").replace("\r", "").replace("\n", " \n ").split(" "):
+            if len(word) > 1:
+                if word[0] == word[-1] and colors.get(word[0]):
+                    words.append(colors[word[0]][0]+html.escape(word)+colors[word[0]][1])
+                else:
+                    words.append(html.escape(word))
+        return " ".join(words).replace(" \n ","\n").replace("\n", "<br/>")
 
 @route('/')
 def index():
@@ -78,6 +79,11 @@ def updateTask(table, view, task_id):
         table = Task[task_id].table
         Task[task_id].delete()
     redirect("/"+table+"/"+view)
+
+
+#TODO : login decorator auth_basic by bottle (check someone is logged in)
+#TODO : other access decorator for acl and group (check the logged in user has the right)
+
 
 
 if __name__ == '__main__':    
