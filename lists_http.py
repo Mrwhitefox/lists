@@ -35,6 +35,8 @@ class Task(db.Entity):
                     words.append(html.escape(word))
         return " ".join(words).replace(" \n ","\n").replace("\n", "<br/>")
 
+def authentication_method(user, password)
+    return user==password
 
 def filter_tasks(tasks_list, table, view):
     result = []
@@ -50,6 +52,7 @@ def filter_tasks(tasks_list, table, view):
 
 
 @route('/')
+@auth_basic(authentication_method)
 def index():
     return template('index', tasks=None, view_columns=view_columns, table=None, view=None)
 
@@ -58,6 +61,7 @@ def send_static(filename):
     return static_file(filename, root='./static')
 
 @route('/<table>/<view>')
+@auth_basic(authentication_method)
 def viewTable(table, view):
     if not view_columns.get(table, {}).get(view):
         # if table or view does not exists, redirect to index
@@ -70,6 +74,7 @@ def viewTable(table, view):
 
 
 @post('/<table>/<view>/new')
+@auth_basic(authentication_method)
 def newTask(table, view):
     data = {}
     for key, value in request.forms.decode('utf-8').items():
@@ -80,6 +85,7 @@ def newTask(table, view):
     redirect("/"+table+"/"+view)
 
 @post('/<table>/<view>/update/<task_id:int>')
+@auth_basic(authentication_method)
 def updateTask(table, view, task_id):
     with orm.db_session:
         task = Task[task_id]
@@ -89,6 +95,7 @@ def updateTask(table, view, task_id):
     redirect("/"+table+"/"+view)
 
 @post('/<table>/<view>/delete/<task_id:int>')
+@auth_basic(authentication_method)
 def updateTask(table, view, task_id):
     table = ""
     with orm.db_session:
