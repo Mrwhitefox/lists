@@ -9,11 +9,14 @@ base_url = "" #will be overidden when conf is loaded
 
 view_columns = {}
 view_filters = {}
+acl = {}
 
 class Task(db.Entity):
     id = orm.PrimaryKey(int, auto=True)
     data = orm.Required(orm.Json)
-    date = orm.Required(datetime.date)
+    update_date = orm.Required(datetime.datetime)
+    creation_date = orm.Required(datetime.datetime)
+    deletion_date = orm.Optional(datetime.datetime)
     table = orm.Required(str)
     
 
@@ -35,8 +38,23 @@ class Task(db.Entity):
                     words.append(html.escape(word))
         return " ".join(words).replace(" \n ","\n").replace("\n", "<br/>")
 
-def authentication_method(user, password)
-    return user==password
+def check_acl_allowed(table, view):
+    user = request.get_header('User-Agent')
+    allowed_groups =  acl.get('restricted_views', {}).get(table, {}).get(view, [])
+    if not allowed_groups:
+        return True
+    return any( [user in acl.get('groups', {}).get(allowed_group, []) for allowed_group in allowed_groups] )
+
+
+def allowed_views():
+    allowed_views = {}
+    for table in view_columns:
+        allowed_views[table] = {}
+        for view in view_columns[table]:
+            if check_acl_allowed(table, view):
+                allowed_views[table][view] = view_columns[table][view]
+    return allowed_views
+
 
 def filter_tasks(tasks_list, table, view):
     result = []
@@ -52,61 +70,80 @@ def filter_tasks(tasks_list, table, view):
 
 
 @route('/')
-@auth_basic(authentication_method)
 def index():
-    return template('index', tasks=None, view_columns=view_columns, table=None, view=None)
+    return template('index', tasks=None, view_columns=allowed_views(), table=None, view=None)
 
 @route('/static/<filename:path>')
 def send_static(filename):
     return static_file(filename, root='./static')
 
+@route('/<table>/deleted-items')
+def deletedItems(table):
+    if not check_acl_allowed(table, "deleted-items"):
+        redirect('/')
+    tasks = []
+    with orm.db_session:
+        tasks = orm.select(t for t in Task if t.table == table and t.deletion_date is not None).order_by(lambda: orm.desc(t.update_date))[:]
+    all_columns = {}
+    for task in tasks:
+        all_columns.update(task.data)
+    
+    return template('index', tasks=tasks, view_columns={table:{"deleted":list(all_columns.keys())}}, table=table, view="deleted", admin=True)
+
+@route('/<table>/deleted-items/undelete/<task_id:int>')
+def undeleteItem(table, task_id):
+    if not check_acl_allowed(table, "undelete"):
+        redirect('/')
+    with orm.db_session:
+        task = Task[task_id]
+        task.deletion_date = None
+    redirect("/"+table+"/deleted-items")
+
+
 @route('/<table>/<view>')
-@auth_basic(authentication_method)
 def viewTable(table, view):
+    if not check_acl_allowed(table, view):
+        redirect('/')
+
     if not view_columns.get(table, {}).get(view):
         # if table or view does not exists, redirect to index
         redirect("/")
     tasks = []
     with orm.db_session:
-        tasks = orm.select(t for t in Task if t.table == table).order_by(lambda: orm.desc(t.date))[:]
+        tasks = orm.select(t for t in Task if t.table == table and t.deletion_date is None).order_by(lambda: orm.desc(t.update_date))[:]
     tasks = filter_tasks(tasks, table, view)
     return template('index', tasks=tasks, view_columns=view_columns, table=table, view=view)
 
-
 @post('/<table>/<view>/new')
-@auth_basic(authentication_method)
 def newTask(table, view):
+    if not check_acl_allowed(table, view):
+        redirect('/')
     data = {}
     for key, value in request.forms.decode('utf-8').items():
         data[key] = value
 
     with orm.db_session:
-        Task(data=data, date=datetime.datetime.now(), table=table)
+        Task(data=data, creation_date=datetime.datetime.now(), update_date=datetime.datetime.now(), table=table)
     redirect("/"+table+"/"+view)
 
 @post('/<table>/<view>/update/<task_id:int>')
-@auth_basic(authentication_method)
 def updateTask(table, view, task_id):
+    if not check_acl_allowed(table, view):
+        redirect('/')
     with orm.db_session:
         task = Task[task_id]
         for key, value in request.forms.decode('utf-8').items():
             task.data[key] = value
-        task.date = datetime.datetime.now()
+        task.update_date = datetime.datetime.now()
     redirect("/"+table+"/"+view)
 
 @post('/<table>/<view>/delete/<task_id:int>')
-@auth_basic(authentication_method)
 def updateTask(table, view, task_id):
-    table = ""
+    if not check_acl_allowed(table, view):
+        redirect('/')
     with orm.db_session:
-        table = Task[task_id].table
-        Task[task_id].delete()
+        Task[task_id].deletion_date = datetime.datetime.now()
     redirect("/"+table+"/"+view)
-
-
-#TODO : login decorator auth_basic by bottle (check someone is logged in)
-#TODO : other access decorator for acl and group (check the logged in user has the right)
-
 
 
 if __name__ == '__main__':    
@@ -130,6 +167,7 @@ if __name__ == '__main__':
         debug = params['debug']
         view_columns = params['views']
         view_filters = params.get("filters", {})
+        acl = params.get("acl", {})
 
     db.bind('sqlite', databasePath, create_db=True)
     db.generate_mapping(create_tables=True)

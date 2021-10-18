@@ -1,3 +1,4 @@
+%setdefault('admin', False)
 
 <!doctype html>
 <html lang="en">
@@ -27,7 +28,7 @@
             </p>
 
             <p>
-            % include("table.tpl", view_columns=view_columns, table=table, view=view, tasks=tasks)
+            % include("table.tpl", view_columns=view_columns, table=table, view=view, tasks=tasks, admin=admin)
             </p>
             %end
         </div>

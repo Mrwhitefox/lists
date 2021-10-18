@@ -6,6 +6,7 @@
             % for menuview in view_columns[menutable]:
                 <li class="pure-menu-item {{"menu-item-divided pure-menu-selected" if menutable == table and menuview == view else ""}}"><a href="/{{menutable}}/{{menuview}}" class="pure-menu-link">{{menutable}} - {{menuview}}</a></li>
             % end
+            % end
             </ul>
         </div>
     </div>
