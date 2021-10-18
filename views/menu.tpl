@@ -1,6 +1,6 @@
     <div id="menu">
         <div class="pure-menu">
-            <a class="pure-menu-heading" href="#">Tables</a>
+            <a class="pure-menu-heading" href="/">Tables</a>
             <ul class="pure-menu-list">
             % for menutable in view_columns:
             % for menuview in view_columns[menutable]:
