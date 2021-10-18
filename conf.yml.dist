@@ -19,3 +19,8 @@ views:
     tB-view1:
       - baz
       - bar
+filters:
+  tableA:
+    tAv2:
+      colA:
+        - keyword

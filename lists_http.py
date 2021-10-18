@@ -8,6 +8,7 @@ db = orm.Database()
 base_url = "" #will be overidden when conf is loaded
 
 view_columns = {}
+view_filters = {}
 
 class Task(db.Entity):
     id = orm.PrimaryKey(int, auto=True)
@@ -34,6 +35,20 @@ class Task(db.Entity):
                     words.append(html.escape(word))
         return " ".join(words).replace(" \n ","\n").replace("\n", "<br/>")
 
+
+def filter_tasks(tasks_list, table, view):
+    result = []
+    column_keywords = view_filters.get(table, "{}").get(view, {})
+
+    if not column_keywords:
+        return tasks_list
+
+    for task in tasks_list:
+        if any( [any([keyword in task.data.get(column, "") for keyword in column_keywords[column]]) for column in column_keywords]):
+            result.append(task)
+    return result
+
+
 @route('/')
 def index():
     return template('index', tasks=None, view_columns=view_columns, table=None, view=None)
@@ -50,6 +65,7 @@ def viewTable(table, view):
     tasks = []
     with orm.db_session:
         tasks = orm.select(t for t in Task if t.table == table).order_by(lambda: orm.desc(t.date))[:]
+    tasks = filter_tasks(tasks, table, view)
     return template('index', tasks=tasks, view_columns=view_columns, table=table, view=view)
 
 
@@ -106,6 +122,7 @@ if __name__ == '__main__':
         http_port = params['http_port']
         debug = params['debug']
         view_columns = params['views']
+        view_filters = params.get("filters", {})
 
     db.bind('sqlite', databasePath, create_db=True)
     db.generate_mapping(create_tables=True)
