@@ -31,7 +31,7 @@
 <td contenteditable="true" data-col={{c}}>{{! t.getHtml(c)}}</td>
 % end
 % if not admin and writeable:
-<td>
+<td title="Created: {{t.creation_date}}&#10;Updated: {{t.update_date}}">
     <button class="pure-button" onclick="submitRowAsForm('{{t.id}}')">✔</button>
     <button class="pure-button delete-button" data-rowid={{t.id}}>X</button>
     
