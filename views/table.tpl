@@ -1,3 +1,4 @@
+<p><button class="pure-button" style="font-size: xx-small;" onclick="$('#myTable').DataTable().order([[0,'None']]).draw();">Reset filters</button></p>
 <table id="myTable" class="pure-table compact row-border hover stripe">
 <thead>
 <tr>
@@ -9,9 +10,9 @@
 <th>undelete</th>
 % end
 % for col in view_columns[table][view]:
-<th>{{col}}</th>
+<th class="sorting">{{col}}</th>
 % end
-% if not admin:
+% if not admin and writeable:
 <th></th>
 % end
 </tr>
@@ -29,7 +30,7 @@
 % for c in view_columns[table][view]:
 <td contenteditable="true" data-col={{c}}>{{! t.getHtml(c)}}</td>
 % end
-% if not admin:
+% if not admin and writeable:
 <td>
     <button class="pure-button" onclick="submitRowAsForm('{{t.id}}')">✔</button>
     <button class="pure-button delete-button" data-rowid={{t.id}}>X</button>

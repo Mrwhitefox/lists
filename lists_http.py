@@ -31,20 +31,25 @@ class Task(db.Entity):
         }
         words = []
         for word in self.data.get(dataKey, "").replace("\r", "").replace("\n", " \n ").split(" "):
-            if len(word) > 1:
+            if len(word) > 2:
                 if word[0] == word[-1] and colors.get(word[0]):
                     words.append(colors[word[0]][0]+html.escape(word)+colors[word[0]][1])
                 else:
                     words.append(html.escape(word))
+            else:
+                words.append(html.escape(word))
+
         return " ".join(words).replace(" \n ","\n").replace("\n", "<br/>")
 
-def check_acl_allowed(table, view):
+def check_acl_allowed(table, view, mode="read"):
     user = request.get_header('User-Agent')
-    allowed_groups =  acl.get('restricted_views', {}).get(table, {}).get(view, [])
+    if mode=="read":
+        allowed_groups =  acl.get('restricted_views', {}).get(table, {}).get(view, [])
+    elif mode=="write":
+        allowed_groups =  acl.get('restricted_write', {}).get(table, {}).get(view, [])
     if not allowed_groups:
         return True
     return any( [user in acl.get('groups', {}).get(allowed_group, []) for allowed_group in allowed_groups] )
-
 
 def allowed_views():
     allowed_views = {}
@@ -54,7 +59,6 @@ def allowed_views():
             if check_acl_allowed(table, view):
                 allowed_views[table][view] = view_columns[table][view]
     return allowed_views
-
 
 def filter_tasks(tasks_list, table, view):
     result = []
@@ -74,6 +78,7 @@ def index():
     return template('index', tasks=None, view_columns=allowed_views(), table=None, view=None)
 
 @route('/static/<filename:path>')
+@route('/images/<filename:path>')
 def send_static(filename):
     return static_file(filename, root='./static')
 
@@ -92,7 +97,7 @@ def deletedItems(table):
 
 @route('/<table>/deleted-items/undelete/<task_id:int>')
 def undeleteItem(table, task_id):
-    if not check_acl_allowed(table, "undelete"):
+    if not check_acl_allowed(table, "undelete") or not check_acl_allowed(table, "undelete", "write"):
         redirect('/')
     with orm.db_session:
         task = Task[task_id]
@@ -112,11 +117,11 @@ def viewTable(table, view):
     with orm.db_session:
         tasks = orm.select(t for t in Task if t.table == table and t.deletion_date is None).order_by(lambda: orm.desc(t.update_date))[:]
     tasks = filter_tasks(tasks, table, view)
-    return template('index', tasks=tasks, view_columns=allowed_views(), table=table, view=view)
+    return template('index', tasks=tasks, view_columns=allowed_views(), table=table, view=view, writeable=check_acl_allowed(table, view, "write"))
 
 @post('/<table>/<view>/new')
 def newTask(table, view):
-    if not check_acl_allowed(table, view):
+    if not check_acl_allowed(table, view) or not check_acl_allowed(table, view, "write"):
         redirect('/')
     data = {}
     for key, value in request.forms.decode('utf-8').items():
@@ -128,7 +133,7 @@ def newTask(table, view):
 
 @post('/<table>/<view>/update/<task_id:int>')
 def updateTask(table, view, task_id):
-    if not check_acl_allowed(table, view):
+    if not check_acl_allowed(table, view) or not check_acl_allowed(table, view, "write"):
         redirect('/')
     with orm.db_session:
         task = Task[task_id]
@@ -139,7 +144,7 @@ def updateTask(table, view, task_id):
 
 @post('/<table>/<view>/delete/<task_id:int>')
 def updateTask(table, view, task_id):
-    if not check_acl_allowed(table, view):
+    if not check_acl_allowed(table, view) or not check_acl_allowed(table, view, "write"):
         redirect('/')
     with orm.db_session:
         Task[task_id].deletion_date = datetime.datetime.now()

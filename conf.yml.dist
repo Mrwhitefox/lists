@@ -44,3 +44,7 @@ acl:
     tableB:
       tB-view2:
         - firefox
+  restricted_write:
+    tableA:
+      tAv2:
+        - firefox

@@ -1,4 +1,5 @@
 %setdefault('admin', False)
+%setdefault('writeable', False)
 
 <!doctype html>
 <html lang="en">
@@ -23,14 +24,15 @@
     <div id="main">
         <div class="content">
             % if table:
+            % if writeable:
             <p>
             % include("new_form.tpl", view_columns=view_columns, table=table, view=view)
             </p>
-
+            % end
             <p>
-            % include("table.tpl", view_columns=view_columns, table=table, view=view, tasks=tasks, admin=admin)
+            % include("table.tpl", view_columns=view_columns, table=table, view=view, tasks=tasks, admin=admin, writeable=writeable)
             </p>
-            %end
+            % end
         </div>
     </div>
 </div>
