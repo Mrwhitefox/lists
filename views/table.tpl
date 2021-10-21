@@ -1,4 +1,4 @@
-<p><button class="pure-button" style="font-size: xx-small;" onclick="$('#myTable').DataTable().order([[0,'None']]).draw();">Reset filters</button></p>
+<p><button class="pure-button small-button" onclick="$('#myTable').DataTable().order([]).draw();location.reload();">Reset sorting</button></p>
 <table id="myTable" class="pure-table compact row-border hover stripe">
 <thead>
 <tr>
@@ -31,9 +31,9 @@
 <td contenteditable="true" data-col={{c}}>{{! t.getHtml(c)}}</td>
 % end
 % if not admin and writeable:
-<td title="Created: {{t.creation_date}}&#10;Updated: {{t.update_date}}">
-    <button class="pure-button" onclick="submitRowAsForm('{{t.id}}')">✔</button>
-    <button class="pure-button delete-button" data-rowid={{t.id}}>X</button>
+<td title="Id: {{t.id}}&#10;Created: {{t.creation_date}}&#10;Updated: {{t.update_date}}">
+    <button class="pure-button small-button" onclick="submitRowAsForm('{{t.id}}')">✔</button>
+    <button class="pure-button delete-button small-button" data-rowid={{t.id}}>X</button>
     
     </td>
 % end

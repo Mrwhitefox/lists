@@ -1,12 +1,8 @@
-import yaml, json, html
-import datetime
-import argparse
+import yaml, json, html, datetime, argparse
 from bottle import route, post, run, template, response, request, HTTPError, redirect, static_file
 from pony import orm
 
 db = orm.Database()
-base_url = "" #will be overidden when conf is loaded
-
 view_columns = {}
 view_filters = {}
 acl = {}
@@ -18,60 +14,43 @@ class Task(db.Entity):
     creation_date = orm.Required(datetime.datetime)
     deletion_date = orm.Optional(datetime.datetime)
     table = orm.Required(str)
-    
 
     def getHtml(self, dataKey):
-        colors = {
-            '+': ['<button class="pure-button button-green">','</button>'],
-            '*': ['<button class="pure-button button-orange">','</button>'],
-            '-': ['<button class="pure-button button-blue">','</button>'],
-            '!': ['<button class="pure-button button-red">','</button>'],
-            '`': ["<code>","</code>"],
-            '_': ['<b>','</b>']
+        colors = { # for html tags when a word is enclosed with special character
+            '+': ['<button class="pure-button button-green">','</button>'], '*': ['<button class="pure-button button-orange">','</button>'],
+            '-': ['<button class="pure-button button-blue">','</button>'],  '!': ['<button class="pure-button button-red">','</button>'],
+            '`': ["<code>","</code>"], '_': ['<b>','</b>']
         }
         words = []
-        for word in self.data.get(dataKey, "").replace("\r", "").replace("\n", " \n ").split(" "):
-            if len(word) > 2:
-                if word[0] == word[-1] and colors.get(word[0]):
-                    words.append(colors[word[0]][0]+html.escape(word)+colors[word[0]][1])
-                else:
-                    words.append(html.escape(word))
+        for word in self.data.get(dataKey, "").replace("\r", "").replace("\n", " \n ").split(" "): # split all words
+            if len(word) > 2 and word[0] == word[-1] and colors.get(word[0]): # if word long enough and beginning and ending with special char
+                    words.append(colors[word[0]][0]+html.escape(word)+colors[word[0]][1]) #enclose with html
             else:
                 words.append(html.escape(word))
-
         return " ".join(words).replace(" \n ","\n").replace("\n", "<br/>")
+
+def redirect_if_disallowed(table, view, mode="r"):
+    if not check_acl_allowed(table, view) or (mode=="rw" and not check_acl_allowed(table, view, "write")) :
+        redirect("/")
 
 def check_acl_allowed(table, view, mode="read"):
     user = request.get_header('User-Agent')
-    if mode=="read":
-        allowed_groups =  acl.get('restricted_views', {}).get(table, {}).get(view, [])
-    elif mode=="write":
-        allowed_groups =  acl.get('restricted_write', {}).get(table, {}).get(view, [])
-    if not allowed_groups:
+    allowed_groups =  acl.get('restricted_views' if mode=="read" else 'restricted_write', {}).get(table, {}).get(view, []) #select different dict if read or write, default is empty
+    if not allowed_groups: # no dict = no restrictions = everyone allowed
         return True
-    return any( [user in acl.get('groups', {}).get(allowed_group, []) for allowed_group in allowed_groups] )
+    return any( [user in acl.get('groups', {}).get(allowed_group, []) for allowed_group in allowed_groups] ) # True if user is in any list of any allowed groups
 
-def allowed_views():
-    allowed_views = {}
-    for table in view_columns:
-        allowed_views[table] = {}
-        for view in view_columns[table]:
-            if check_acl_allowed(table, view):
-                allowed_views[table][view] = view_columns[table][view]
-    return allowed_views
+def allowed_views(): # return a copy of view_columns without disallowed views
+    return {table: { view: view_columns[table][view] for view in views if check_acl_allowed(table, view)} for table, views in view_columns.items() }
 
 def filter_tasks(tasks_list, table, view):
-    result = []
-    column_keywords = view_filters.get(table, "{}").get(view, {})
+    column_keywords = view_filters.get(table, {}).get(view, {})
 
     if not column_keywords:
-        return tasks_list
+        return tasks_list #no keyword = no filter = return all
 
-    for task in tasks_list:
-        if any( [any([keyword in task.data.get(column, "") for keyword in column_keywords[column]]) for column in column_keywords]):
-            result.append(task)
-    return result
-
+    # filter tasks: keep the lines with any column having a mathing keyword
+    return filter( lambda task: any( [any([keyword in task.data.get(column, "") for keyword in column_keywords[column]]) for column in column_keywords]) , tasks_list)
 
 @route('/')
 def index():
@@ -84,8 +63,7 @@ def send_static(filename):
 
 @route('/<table>/deleted-items')
 def deletedItems(table):
-    if not check_acl_allowed(table, "deleted-items"):
-        redirect('/')
+    redirect_if_disallowed(table, "deleted-items")
     tasks = []
     with orm.db_session:
         tasks = orm.select(t for t in Task if t.table == table and t.deletion_date is not None).order_by(lambda: orm.desc(t.update_date))[:]
@@ -97,22 +75,17 @@ def deletedItems(table):
 
 @route('/<table>/deleted-items/undelete/<task_id:int>')
 def undeleteItem(table, task_id):
-    if not check_acl_allowed(table, "undelete") or not check_acl_allowed(table, "undelete", "write"):
-        redirect('/')
+    redirect_if_disallowed(table, "undelete", "rw")
     with orm.db_session:
         task = Task[task_id]
         task.deletion_date = None
     redirect("/"+table+"/deleted-items")
 
-
 @route('/<table>/<view>')
 def viewTable(table, view):
-    if not check_acl_allowed(table, view):
-        redirect('/')
-
+    redirect_if_disallowed(table, view)
     if not view_columns.get(table, {}).get(view):
-        # if table or view does not exists, redirect to index
-        redirect("/")
+        redirect("/") # if table or view does not exists, redirect to index
     tasks = []
     with orm.db_session:
         tasks = orm.select(t for t in Task if t.table == table and t.deletion_date is None).order_by(lambda: orm.desc(t.update_date))[:]
@@ -121,38 +94,28 @@ def viewTable(table, view):
 
 @post('/<table>/<view>/new')
 def newTask(table, view):
-    if not check_acl_allowed(table, view) or not check_acl_allowed(table, view, "write"):
-        redirect('/')
-    data = {}
-    for key, value in request.forms.decode('utf-8').items():
-        data[key] = value
-
+    redirect_if_disallowed(table, view, "rw")
     with orm.db_session:
-        Task(data=data, creation_date=datetime.datetime.now(), update_date=datetime.datetime.now(), table=table)
+        Task(data={k:v for k,v in request.forms.decode('utf-8').items()}, creation_date=datetime.datetime.now(), update_date=datetime.datetime.now(), table=table)
     redirect("/"+table+"/"+view)
 
 @post('/<table>/<view>/update/<task_id:int>')
 def updateTask(table, view, task_id):
-    if not check_acl_allowed(table, view) or not check_acl_allowed(table, view, "write"):
-        redirect('/')
+    redirect_if_disallowed(table, view, "rw")
     with orm.db_session:
         task = Task[task_id]
-        for key, value in request.forms.decode('utf-8').items():
-            task.data[key] = value
+        task.data.update({k:v for k,v in request.forms.decode('utf-8').items()})
         task.update_date = datetime.datetime.now()
     redirect("/"+table+"/"+view)
 
 @post('/<table>/<view>/delete/<task_id:int>')
 def updateTask(table, view, task_id):
-    if not check_acl_allowed(table, view) or not check_acl_allowed(table, view, "write"):
-        redirect('/')
+    redirect_if_disallowed(table, view, "rw")
     with orm.db_session:
         Task[task_id].deletion_date = datetime.datetime.now()
     redirect("/"+table+"/"+view)
 
-
 if __name__ == '__main__':    
-    # Read CLI arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('configPath', metavar='configPath',
             help='Path to YML config file')
@@ -164,13 +127,11 @@ if __name__ == '__main__':
 
     with open(args.configPath, 'r') as ymlFile:
         params = yaml.load(ymlFile)
-        # CONSTANTS
         verbose = args.verbose
         databasePath = params['database_path']
-        base_url = params['base_url']
-        http_port = params['http_port']
-        debug = params['debug']
         view_columns = params['views']
+        http_port = params.get('http_port', 80)
+        debug = params.get('debug', False)
         view_filters = params.get("filters", {})
         acl = params.get("acl", {})
 
