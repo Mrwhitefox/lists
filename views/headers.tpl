@@ -6,6 +6,14 @@
 
 <script src="/static/jquery.dataTables.min.js"></script>
 
+
+<script src="/static/dataTables.buttons.min.js"></script>
+<script src="/static/jszip.min.js"></script>
+<script src="/static/pdfmake.min.js"></script>
+<script src="/static/vfs_fonts.js"></script>
+<script src="/static/buttons.html5.min.js"></script>
+<script src="/static/buttons.print.min.js"></script>
+
 <link rel="stylesheet" type="text/css" href="/static/jquery.dataTables.min.css"></link>
 
 <link rel="stylesheet" href="/static/pure.min.css" crossorigin="anonymous">
@@ -34,10 +42,20 @@ $(document).ready( function () {
             "language" : {
                 "search": "",
                 "searchPlaceholder": "search"
-            }
-            
+            },
+            "dom":"Bftr",
+             buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print',
+				{
+		            text: 'Reset filters',
+		            action: function ( e, dt, node, config ) {
+                        $('#myTable').DataTable().order([]).draw();location.reload();
+                    }
+                 }
+            ]
         });
 } );
+
 
 
 

@@ -72,7 +72,9 @@ The content `<div>` is where all your content goes.
     color: #888;
 }
 
+.dt-button,
 .small-button {
+    .pure-button;
 	font-size: 70%;
 }
 

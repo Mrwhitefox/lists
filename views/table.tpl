@@ -1,4 +1,3 @@
-<p><button class="pure-button small-button" onclick="$('#myTable').DataTable().order([]).draw();location.reload();">Reset sorting</button></p>
 <table id="myTable" class="pure-table compact row-border hover stripe">
 <thead>
 <tr>
