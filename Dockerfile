@@ -1,10 +1,14 @@
 FROM python:3.7-slim
 
-ADD lists_http.py requirements.txt conf.yml.dist /opt/lists/
-ADD static /opt/lists/static
-ADD views /opt/lists/views
+RUN mkdir -p /opt/lists
+ADD requirements.txt /opt/lists
 
 RUN pip install -r /opt/lists/requirements.txt
+
+ADD static /opt/lists/static
+ADD views /opt/lists/views
+ADD lists_http.py conf.yml.dist /opt/lists/
+
 
 WORKDIR /opt/lists/
 EXPOSE 80/tcp
