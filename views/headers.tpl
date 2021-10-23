@@ -8,9 +8,6 @@
 
 
 <script src="/static/dataTables.buttons.min.js"></script>
-<script src="/static/jszip.min.js"></script>
-<script src="/static/pdfmake.min.js"></script>
-<script src="/static/vfs_fonts.js"></script>
 <script src="/static/buttons.html5.min.js"></script>
 <script src="/static/buttons.print.min.js"></script>
 
@@ -45,7 +42,7 @@ $(document).ready( function () {
             },
             "dom":"Bftr",
              buttons: [
-                'copy', 'csv', 'excel', 'pdf', 'print',
+                'copy', 'csv', 'print',
 				{
 		            text: 'Reset filters',
 		            action: function ( e, dt, node, config ) {
