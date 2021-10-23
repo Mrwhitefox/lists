@@ -27,7 +27,7 @@
 <td><a href=/{{table}}/deleted-items/undelete/{{t.id}}>undelete</a></td>
 % end
 % for c in view_columns[table][view]:
-<td contenteditable="true" data-col={{c}}>{{! t.getHtml(c)}}</td>
+<td contenteditable="{{writeable}}" data-col={{c}}>{{! t.getHtml(c)}}</td>
 % end
 % if not admin and writeable:
 <td title="Id: {{t.id}}&#10;Created: {{t.creation_date}}&#10;Updated: {{t.update_date}}">

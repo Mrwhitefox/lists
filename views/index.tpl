@@ -32,6 +32,16 @@
             <p>
             % include("table.tpl", view_columns=view_columns, table=table, view=view, tasks=tasks, admin=admin, writeable=writeable)
             </p>
+
+            <p>Tips: CTRL+ENTER saves the current line</p>
+            <p><button class="pure-button button-green">+tag+</button> 
+            <button class="pure-button button-orange">*tag*</button> 
+            <button class="pure-button button-blue">-tag-</button> 
+            <button class="pure-button button-red">!tag!</button> 
+            <code>`code`</code> 
+            <b>_bold_</b> 
+            </p>
+
             % end
         </div>
     </div>

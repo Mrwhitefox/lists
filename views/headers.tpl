@@ -2,30 +2,30 @@
 
 <link rel="icon" type="image/png" href="/static/logo.png" />
 
-<script src="/static/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+<script src="/static/jquery-3.5.1.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2"></script>
 
-<script src="/static/jquery.dataTables.min.js"></script>
+<script src="/static/jquery.dataTables.min.js" integrity="sha384-XnTxmviuqUy3cHBf+lkYWuTSDlhxCDxd9RgSo5zvzsCq93P9xNa6eENuAITCwxNh"></script>
 
 
-<script src="/static/dataTables.buttons.min.js"></script>
-<script src="/static/buttons.html5.min.js"></script>
-<script src="/static/buttons.print.min.js"></script>
+<script src="/static/dataTables.buttons.min.js" integrity="sha384-MGimb05YiSGNcXiLlj03UNahXBECHmFTe5iVBqh6sf2G7ccabI3/EOqzBnNw97/T"></script>
+<script src="/static/buttons.html5.min.js" integrity="sha384-pp2ArcKo71umWphZ7QCCjQbnICkbOkLF88ZeoeZDPbqdAVvxZlcrla3lyT7pY/ue"></script>
+<script src="/static/buttons.print.min.js" integrity="sha384-mOGjUrCoMJ8/pGqc8SQHuJdYPrdB9cjSkiuLQbw6D7orbJyMkk6xYDlYtkEH051d"></script>
 
-<link rel="stylesheet" type="text/css" href="/static/jquery.dataTables.min.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/jquery.dataTables.min.css" integrity="sha384-XVHNoSVVnIfu4RRRsj+h8t6p+8o+eq87kb7Abav9bxpX9nNibXFocxhyLbi8/g1U"></link>
 
-<link rel="stylesheet" href="/static/pure.min.css" crossorigin="anonymous">
-<link rel="stylesheet" href="/static/index.css">
+<link rel="stylesheet" href="/static/pure.min.css" integrity="sha384-UU8kk90p/K2Nap2Aw4M19cGNy16njCCgQLQ455EmZqROSNzpHaVc4jN+g4GoxZLC">
+<link rel="stylesheet" href="/static/index.css" integrity="sha384-YcH0ZDzgYorxkrpvW0jtAdNprT1XZG/vdUU3/BkmGr6rdiGTCF1saEFgjeFNiRUa">
 
 <style>
 .dataTables_filter input { width: 100% }
 .dataTables_filter { width: 100% }
 
-td[contenteditable="true"]:focus {
+td[contenteditable="True"]:focus {
     background-color: #FF4040;
 }
 
-.edited{
-    background-color: #FF4040;
+td.edited {
+    background-color: #FF9090;
 }
 </style>
 
@@ -58,7 +58,19 @@ $(document).ready( function () {
 
 $( document ).ready(function() {
   $("td").focusout(function(){
-        $(this).parent().children().last().children(":button").first().addClass("button-green").removeClass("button-blue");
+        $(this).addClass("edited");
+        $(this).parent().children().last().children(":button").first().addClass("button-green");
+  });
+});
+
+
+$( document ).ready(function() {
+  $('td').keydown(function (e) {
+    if ((e.ctrlKey || e.metaKey) && (e.keyCode == 13 || e.keyCode == 10)) {
+        // Ctrl-Enter pressed
+        submitRowAsForm($(this).parent().attr('id'));
+
+    }
   });
 });
 
