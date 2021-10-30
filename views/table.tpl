@@ -1,4 +1,4 @@
-<table id="myTable" class="pure-table compact row-border hover stripe">
+<table id="myTable" class="compact row-border hover stripe">
 <thead>
 <tr>
 % if admin:

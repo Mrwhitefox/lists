@@ -10,24 +10,12 @@
 <script src="/static/dataTables.buttons.min.js" integrity="sha384-MGimb05YiSGNcXiLlj03UNahXBECHmFTe5iVBqh6sf2G7ccabI3/EOqzBnNw97/T"></script>
 <script src="/static/buttons.html5.min.js" integrity="sha384-pp2ArcKo71umWphZ7QCCjQbnICkbOkLF88ZeoeZDPbqdAVvxZlcrla3lyT7pY/ue"></script>
 <script src="/static/buttons.print.min.js" integrity="sha384-mOGjUrCoMJ8/pGqc8SQHuJdYPrdB9cjSkiuLQbw6D7orbJyMkk6xYDlYtkEH051d"></script>
+<script src="/static/theme.js"></script>
 
-<link rel="stylesheet" type="text/css" href="/static/jquery.dataTables.min.css" integrity="sha384-XVHNoSVVnIfu4RRRsj+h8t6p+8o+eq87kb7Abav9bxpX9nNibXFocxhyLbi8/g1U"></link>
+<link rel="stylesheet" type="text/css" href="/static/jquery.dataTables.min.css"></link>
 
 <link rel="stylesheet" href="/static/pure.min.css" integrity="sha384-UU8kk90p/K2Nap2Aw4M19cGNy16njCCgQLQ455EmZqROSNzpHaVc4jN+g4GoxZLC">
-<link rel="stylesheet" href="/static/index.css" integrity="sha384-YcH0ZDzgYorxkrpvW0jtAdNprT1XZG/vdUU3/BkmGr6rdiGTCF1saEFgjeFNiRUa">
-
-<style>
-.dataTables_filter input { width: 100% }
-.dataTables_filter { width: 100% }
-
-td[contenteditable="True"]:focus {
-    background-color: #FF4040;
-}
-
-td.edited {
-    background-color: #FF9090;
-}
-</style>
+<link rel="stylesheet" href="/static/index.css" integrity="sha384-NIZb3zZmrEPBpfXxOgsUtbrt36KljB20S4aLKqZCGr2M8h9v28R4q2b+ibr569qp">
 
 
 <script>
@@ -41,19 +29,23 @@ $(document).ready( function () {
                 "searchPlaceholder": "search"
             },
             "dom":"Bftr",
+            initComplete: function(){
+                $('#myTable_filter label input').focus();
+            },
              buttons: [
-                'copy', 'csv', 'print',
+                { extend: 'copy', className: 'pure-button' },
+                { extend: 'csv', className: 'pure-button' },
+                { extend: 'print', className: 'pure-button' },
 				{
 		            text: 'Reset filters',
 		            action: function ( e, dt, node, config ) {
                         $('#myTable').DataTable().order([]).draw();location.reload();
-                    }
+                    },
+                    className: 'pure-button'
                  }
             ]
         });
 } );
-
-
 
 
 $( document ).ready(function() {

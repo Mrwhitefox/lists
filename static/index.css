@@ -1,5 +1,58 @@
+.theme-light {
+    --color-bg: #EEE;
+    --color-font: #333;
+    --color-primary: #673AB7;
+    --color-secondary: #9575CD;
+    --color-accent: #fd6f53;
+    --font-color: #202020;
+    --dtbg1: #fff;
+    --dtbg-select: #b0bed9;
+    --dtbg-odd: #f9f9f9;
+    --dtbg-odd-select: #acbad4;
+    --dtbg-hover: #f6f6f6;
+    --dtbg-hover-select: #aab7d1;
+    --color-editing: #DE350B;
+    --color-edited: #FF5630;
+
+  }
+
+.theme-dark {
+    --color-bg: #000;
+    --color-font: #eee;
+    --color-primary: #673AB7;
+    --color-secondary: #3C2368;
+    --color-accent: #12cdea;
+    --font-color: #EEE;
+    --dtbg1: #222;
+    --dtbg-hover: #515151;
+    --dtbg-select: #00FF00;
+    --dtbg-odd: #3B3B3B;
+    --dtbg-odd-select: #334E68;
+  }
+
+th {
+    color: var(--color-font);
+    background-color: var(--color-secondary);
+}
+
+
+.dataTables_filter input {
+    width: 100% ;
+    color:var(--color-font);
+}
+.dataTables_filter { width: 100%; }
+
+td[contenteditable="True"]:focus {
+    background-color: var(--color-editing);
+}
+
+td.edited {
+    background-color: var(--color-edited);
+
+ }
 body {
-    color: #333;
+    color: var(--color-font);
+    background-color: var(--color-bg);
 }
 
 .pure-img-responsive {
@@ -73,33 +126,37 @@ The content `<div>` is where all your content goes.
 }
 
 .dt-button,
+.pure-button,
 .small-button {
-    .pure-button;
 	font-size: 70%;
 }
 
 .button-green,
 .button-red,
 .button-orange,
+.button-purple,
 .button-blue {
     color: white;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
+.button-purple {
+   background: #A239A0;
+}
 .button-green {
-   background: rgb(28, 184, 65);
+   background: #00875A;
 }
 
 .button-red {
-    background: rgb(202, 60, 60);
+    background: #C62828;
 }
 
 .button-orange {
-    background: rgb(223, 117, 20);
+    background: #FF991F;
 }
 
 .button-blue {
-    background: rgb(66, 184, 221);
+    background: #00A3BF;
 }
 
 /*
@@ -156,7 +213,7 @@ appears on the left side of the page.
     */
     #menu .pure-menu-selected,
     #menu .pure-menu-heading {
-        background: #1f8dd6;
+        background: var(--color-primary);
     }
         /*
         This styles a link within a selected menu item `<li>`.

@@ -19,7 +19,7 @@ class Task(db.Entity):
         colors = { # for html tags when a word is enclosed with special character
             '+': ['<button class="pure-button button-green">','</button>'], '*': ['<button class="pure-button button-orange">','</button>'],
             '-': ['<button class="pure-button button-blue">','</button>'],  '!': ['<button class="pure-button button-red">','</button>'],
-            '`': ["<code>","</code>"], '_': ['<b>','</b>']
+            '§': ['<button class="pure-button button-purple">','</button>'], '`': ["<code>","</code>"], '_': ['<b>','</b>']
         }
         words = []
         for word in self.data.get(dataKey, "").replace("\r", "").replace("\n", " \n ").split(" "): # split all words

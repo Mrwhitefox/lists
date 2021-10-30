@@ -2,7 +2,7 @@
 %setdefault('writeable', False)
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="theme-light">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,9 +38,11 @@
             <button class="pure-button button-orange">*tag*</button> 
             <button class="pure-button button-blue">-tag-</button> 
             <button class="pure-button button-red">!tag!</button> 
+            <button class="pure-button button-purple">§tag§</button>
             <code>`code`</code> 
             <b>_bold_</b> 
             </p>
+            <p><button id="switch" onclick="toggleTheme()">Switch colors</button></p>
 
             % end
         </div>
