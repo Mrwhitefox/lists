@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/pure.min.css">
     <link rel="stylesheet" href="/static/index.css">
-% include('headers.tpl')
+% include('headers.tpl', table=table, writeable=writeable)
 </head>
 <body>
 
@@ -33,6 +33,7 @@
             % include("table.tpl", view_columns=view_columns, table=table, view=view, tasks=tasks, admin=admin, writeable=writeable)
             </p>
 
+            % if writeable:
             <p>Tips: CTRL+ENTER saves the current line</p>
             <p><button class="pure-button button-green">+tag+</button> 
             <button class="pure-button button-orange">*tag*</button> 
@@ -42,9 +43,10 @@
             <code>`code`</code> 
             <b>_bold_</b> 
             </p>
-            <p><button id="switch" onclick="toggleTheme()">Switch colors</button></p>
+            % end
 
             % end
+            <p><button id="switch" onclick="toggleTheme()">Switch colors</button></p>
         </div>
     </div>
 </div>

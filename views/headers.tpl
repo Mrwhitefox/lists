@@ -10,13 +10,15 @@
 <script src="/static/dataTables.buttons.min.js" integrity="sha384-MGimb05YiSGNcXiLlj03UNahXBECHmFTe5iVBqh6sf2G7ccabI3/EOqzBnNw97/T"></script>
 <script src="/static/buttons.html5.min.js" integrity="sha384-pp2ArcKo71umWphZ7QCCjQbnICkbOkLF88ZeoeZDPbqdAVvxZlcrla3lyT7pY/ue"></script>
 <script src="/static/buttons.print.min.js" integrity="sha384-mOGjUrCoMJ8/pGqc8SQHuJdYPrdB9cjSkiuLQbw6D7orbJyMkk6xYDlYtkEH051d"></script>
-<script src="/static/theme.js"></script>
+<script src="/static/theme.js" integrity="sha384-bjcyLhD3HIrP9mAbeiSLqbyPugYFcs+BRD4OOhIWzCgoFwZ46GTetSvOUZfe98PD"></script>
 
-<link rel="stylesheet" type="text/css" href="/static/jquery.dataTables.min.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/jquery.dataTables.min.css" integrity=sha384-"fMhhhMktDQZbvmPfBnKagbr1oS3tDYtFDoOCrnSjq1tZ3kmY/2Tm3Ei7uAL2hAS1"></link>
 
 <link rel="stylesheet" href="/static/pure.min.css" integrity="sha384-UU8kk90p/K2Nap2Aw4M19cGNy16njCCgQLQ455EmZqROSNzpHaVc4jN+g4GoxZLC">
 <link rel="stylesheet" href="/static/index.css" integrity="sha384-NIZb3zZmrEPBpfXxOgsUtbrt36KljB20S4aLKqZCGr2M8h9v28R4q2b+ibr569qp">
 
+
+% if table:
 
 <script>
 $(document).ready( function () {
@@ -37,7 +39,7 @@ $(document).ready( function () {
                 { extend: 'csv', className: 'pure-button' },
                 { extend: 'print', className: 'pure-button' },
 				{
-		            text: 'Reset filters',
+		            text: 'Reset sorting',
 		            action: function ( e, dt, node, config ) {
                         $('#myTable').DataTable().order([]).draw();location.reload();
                     },
@@ -47,6 +49,7 @@ $(document).ready( function () {
         });
 } );
 
+%if writeable:
 
 $( document ).ready(function() {
   $("td").focusout(function(){
@@ -82,9 +85,6 @@ $( document ).ready(function() {
   });
 });
 
-
-
-
 function submitRowAsForm(idRow) {
   form = document.createElement("form"); // CREATE A NEW FORM TO DUMP ELEMENTS INTO FOR SUBMISSION
   form.method = "post"; // CHOOSE FORM SUBMISSION METHOD, "GET" OR "POST"
@@ -104,4 +104,6 @@ function submitRowAsForm(idRow) {
   document.body.appendChild(form);
   form.submit(); // NOW SUBMIT THE FORM THAT WE'VE JUST CREATED AND POPULATED
 }
+%end
 </script>
+%end

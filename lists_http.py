@@ -36,7 +36,7 @@ def redirect_if_disallowed(table, view, mode="r"):
 def check_acl_allowed(table, view, mode="read"):
     user = request.get_header('User-Agent')
     allowed_groups =  acl.get('restricted_views' if mode=="read" else 'restricted_write', {}).get(table, {}).get(view, []) #select different dict if read or write, default is empty
-    if not allowed_groups: # no dict = no restrictions = everyone allowed
+    if not allowed_groups: # no list or empty list = no restrictions = everyone allowed
         return True
     return any( [user in acl.get('groups', {}).get(allowed_group, []) for allowed_group in allowed_groups] ) # True if user is in any list of any allowed groups
 
