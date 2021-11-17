@@ -12,7 +12,7 @@
     --dtbg-hover: #f6f6f6;
     --dtbg-hover-select: #aab7d1;
     --color-editing: #DE350B;
-    --color-edited: #FF5630;
+    --color-edited: #E07358;
 
   }
 
@@ -28,6 +28,8 @@
     --dtbg-select: #00FF00;
     --dtbg-odd: #3B3B3B;
     --dtbg-odd-select: #334E68;
+    --color-editing: #C70039;
+    --color-edited: #900C3F;
   }
 
 th {

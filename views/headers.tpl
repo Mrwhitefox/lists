@@ -12,10 +12,10 @@
 <script src="/static/buttons.print.min.js" integrity="sha384-mOGjUrCoMJ8/pGqc8SQHuJdYPrdB9cjSkiuLQbw6D7orbJyMkk6xYDlYtkEH051d"></script>
 <script src="/static/theme.js" integrity="sha384-bjcyLhD3HIrP9mAbeiSLqbyPugYFcs+BRD4OOhIWzCgoFwZ46GTetSvOUZfe98PD"></script>
 
-<link rel="stylesheet" type="text/css" href="/static/jquery.dataTables.min.css" integrity=sha384-"fMhhhMktDQZbvmPfBnKagbr1oS3tDYtFDoOCrnSjq1tZ3kmY/2Tm3Ei7uAL2hAS1"></link>
+<link rel="stylesheet" type="text/css" href="/static/jquery.dataTables.min.css" integrity="sha384-fMhhhMktDQZbvmPfBnKagbr1oS3tDYtFDoOCrnSjq1tZ3kmY/2Tm3Ei7uAL2hAS1"></link>
 
 <link rel="stylesheet" href="/static/pure.min.css" integrity="sha384-UU8kk90p/K2Nap2Aw4M19cGNy16njCCgQLQ455EmZqROSNzpHaVc4jN+g4GoxZLC">
-<link rel="stylesheet" href="/static/index.css" integrity="sha384-NIZb3zZmrEPBpfXxOgsUtbrt36KljB20S4aLKqZCGr2M8h9v28R4q2b+ibr569qp">
+<link rel="stylesheet" href="/static/index.css" integrity="sha384-BzYXkMkVMBVdvnIydG8Y/uBOiiCYbrK6dBafWoPw9WbDPP1zU+4NBdCVy1GpAMBc">
 
 
 % if table:
