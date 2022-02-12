@@ -24,6 +24,11 @@
     <div id="main">
         <div class="content">
             % if table:
+
+            % if view in gantts.get(table, {}):
+                %include("gantt.tpl", table=table, view=view, tasks=tasks, gantts=gantts)
+            % end
+
             % if writeable:
             <p>
             % include("new_form.tpl", view_columns=view_columns, table=table, view=view)

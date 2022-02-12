@@ -6,6 +6,7 @@ db = orm.Database()
 view_columns = {}
 view_filters = {}
 acl = {}
+gantts = {}
 
 class Task(db.Entity):
     id = orm.PrimaryKey(int, auto=True)
@@ -90,7 +91,7 @@ def viewTable(table, view):
     with orm.db_session:
         tasks = orm.select(t for t in Task if t.table == table and t.deletion_date is None).order_by(lambda: orm.desc(t.update_date))[:]
     tasks = filter_tasks(tasks, table, view)
-    return template('index', tasks=tasks, view_columns=allowed_views(), table=table, view=view, writeable=check_acl_allowed(table, view, "write"))
+    return template('index', tasks=tasks, view_columns=allowed_views(), table=table, view=view, writeable=check_acl_allowed(table, view, "write"), gantts=gantts)
 
 @post('/<table>/<view>/new')
 def newTask(table, view):
@@ -134,6 +135,7 @@ if __name__ == '__main__':
         debug = params.get('debug', False)
         view_filters = params.get("filters", {})
         acl = params.get("acl", {})
+        gantts = params.get("gantts", {})
 
     db.bind('sqlite', databasePath, create_db=True)
     db.generate_mapping(create_tables=True)

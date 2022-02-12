@@ -18,7 +18,22 @@
 <link rel="stylesheet" href="/static/index.css" integrity="sha384-BzYXkMkVMBVdvnIydG8Y/uBOiiCYbrK6dBafWoPw9WbDPP1zU+4NBdCVy1GpAMBc">
 
 
+
 % if table:
+
+%if view in gantts.get(table, {}):
+<!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> -->
+<script type="text/javascript" src="/static/gapi/loader.js"></script>
+<script type="text/javascript" src="/static/gapi/jsapi_compiled_i18n_default_module__fr.js"></script>
+<script type="text/javascript" src="/static/gapi/jsapi_compiled_i18n_graphics_module__fr.js"></script>
+<script type="text/javascript" src="/static/gapi/jsapi_compiled_i18n_ui_module__fr.js"></script>
+<script type="text/javascript" src="/static/gapi/jsapi_compiled_i18n_fw_module__fr.js"></script>
+<script type="text/javascript" src="/static/gapi/dygraph-tickers-combined.js"></script>
+<script type="text/javascript" src="/static/gapi/jsapi_compiled_i18n_gantt_module__fr.js"></script>
+<link rel="stylesheet" href="/static/gapi/tooltip.css">
+<link rel="stylesheet" href="/static/gapi/util.css">
+
+%end
 
 <script>
 $(document).ready( function () {
@@ -48,6 +63,7 @@ $(document).ready( function () {
             ]
         });
 } );
+
 
 %if writeable:
 
